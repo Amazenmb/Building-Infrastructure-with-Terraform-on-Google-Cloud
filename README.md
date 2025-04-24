@@ -35,9 +35,12 @@ Complex changesets can be applied to your infrastructure with minimal human inte
 4. Use and implement a module from the Terraform Registry.
 5. Re-provision, destroy, and update infrastructure.
 6. Test connectivity between the resources you've created.
+---------------------------------------------------------------
 
 **Scenario**
 You are tasked with creating infrastructure in a quick and efficient manner and generating a mechanism to keep track of it for future reference and changes. You have been directed to use Terraform to complete the project. For this project, you will use Terraform to create, deploy, and keep track of infrastructure on the startup's preferred provider, Google Cloud. You will also need to import some mismanaged instances into your configuration and fix them.
+
+---------------------------------------------------------------
 
 **Tasks**
 1. Create the configuration files
@@ -47,6 +50,8 @@ You are tasked with creating infrastructure in a quick and efficient manner and 
 5. Destroy resources
 6. Use a module from the registry
 7. Configure a firewall
+
+-----------------------------------------------------------------
 
 **Execution**
 Please check the **Steps** file.
