@@ -8,7 +8,9 @@ Terraform is
 **Step 2: Enter the following commands with the details to be inserted from lab start details.**
 
 export BUCKET=
+
 export INSTANCE=
+
 export VPC=
 
 **Step 3:**
