@@ -1,1 +1,13 @@
+**Step 1: Login to GCP and then open Cloud Shell**
 
+**Step 2: Enter the following commands with the details to be inserted from Quick lab credentials**
+
+export BUCKET=
+
+export INSTANCE=
+
+export VPC=
+
+**Step 3:And then, this command:**
+
+curl -LO https://raw.githubusercontent.com/Amazenmb/Building-Infrastructure-with-Terraform-on-Google-Cloud/refs/heads/main/GCSB636.sh?token=GHSAT0AAAAAADCRV3NIBDRTY4Y54EXM3DNC2AKHXMQ
