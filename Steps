@@ -12,6 +12,6 @@ export VPC=
 
 curl -LO https://raw.githubusercontent.com/Amazenmb/Building-Infrastructure-with-Terraform-on-Google-Cloud/refs/heads/main/GSP345.sh
 
-sudo chmod +x gsp345.sh
+sudo chmod +x GSP345.sh
 
-./gsp345.sh
+./GSP345.sh
