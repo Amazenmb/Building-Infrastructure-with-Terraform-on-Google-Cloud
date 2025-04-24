@@ -11,7 +11,7 @@ export BUCKET=
 export INSTANCE=
 export VPC=
 
-Step 3:
+**Step 3:**
 
 
 
