@@ -1,4 +1,87 @@
 export REGION=us-central1-b
+gcloud compute networks create griffin-dev-vpc --subnet-mode custom
+
+gcloud compute networks subnets create griffin-dev-wp --network=griffin-dev-vpc --region $REGION --range=192.168.16.0/20
+
+gcloud compute networks subnets create griffin-dev-mgmt --network=griffin-dev-vpc --region $REGION --range=192.168.32.0/20
+
+echo "${RED}${BOLD}Task 1. ${RESET}""${WHITE}${BOLD}Create development VPC manually${RESET}" "${GREEN}${BOLD}Completed${RESET}"
+
+gsutil cp -r gs://cloud-training/gsp321/dm .
+
+cd dm
+
+sed -i s/SET_REGION/$REGION/g prod-network.yaml
+
+gcloud deployment-manager deployments create prod-network \
+    --config=prod-network.yaml
+
+cd ..
+
+echo "${RED}${BOLD}Task 2. ${RESET}""${WHITE}${BOLD}Create production VPC manually${RESET}" "${GREEN}${BOLD}Completed${RESET}"
+
+gcloud compute instances create bastion --network-interface=network=griffin-dev-vpc,subnet=griffin-dev-mgmt  --network-interface=network=griffin-prod-vpc,subnet=griffin-prod-mgmt --tags=ssh --zone=$ZONE
+
+gcloud compute firewall-rules create fw-ssh-dev --source-ranges=0.0.0.0/0 --target-tags ssh --allow=tcp:22 --network=griffin-dev-vpc
+
+gcloud compute firewall-rules create fw-ssh-prod --source-ranges=0.0.0.0/0 --target-tags ssh --allow=tcp:22 --network=griffin-prod-vpc
+
+
+echo "${RED}${BOLD}Task 3. ${RESET}""${WHITE}${BOLD}Create bastion host${RESET}" "${GREEN}${BOLD}Completed${RESET}"
+
+gcloud sql instances create griffin-dev-db \
+    --database-version=MYSQL_5_7 \
+    --region=$REGION \
+    --root-password='awesome'
+
+gcloud sql databases create wordpress --instance=griffin-dev-db
+gcloud sql users create wp_user --instance=griffin-dev-db --password=stormwind_rules --instance=griffin-dev-db
+gcloud sql users set-password wp_user --instance=griffin-dev-db --password=stormwind_rules --instance=griffin-dev-db
+gcloud sql users list --instance=griffin-dev-db --format="value(name)" --filter="host='%'" --instance=griffin-dev-db
+
+echo "${RED}${BOLD}Task 4. ${RESET}""${WHITE}${BOLD}Create and configure Cloud SQL Instance${RESET}" "${GREEN}${BOLD}Completed${RESET}"
+
+gcloud container clusters create griffin-dev \
+  --network griffin-dev-vpc \
+  --subnetwork griffin-dev-wp \
+  --machine-type e2-standard-4 \
+  --num-nodes 2  \
+  --zone $ZONE
+
+gcloud container clusters get-credentials griffin-dev --zone $ZONE
+
+cd ~/
+
+gsutil cp -r gs://cloud-training/gsp321/wp-k8s .
+
+
+echo "${RED}${BOLD}Task 5. ${RESET}""${WHITE}${BOLD}Create Kubernetes cluster${RESET}" "${GREEN}${BOLD}Completed${RESET}"
+
+cat > wp-k8s/wp-env.yaml <<EOF_END
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: wordpress-volumeclaim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 200Gi
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: database
+type: Opaque
+stringData:
+  username: wp_user
+  password: stormwind_rules
+
+EOF_END
+
+cd wp-k8s
+
 kubectl create -f wp-env.yaml
 
 gcloud iam service-accounts keys create key.json \
